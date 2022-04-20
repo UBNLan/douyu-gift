@@ -64,8 +64,13 @@ export default class user extends Vue {
   get fans() {
     return this.$store.state.fans
   }
+  get sunTask() {
+    return this.$store.state.sunTask
+  }
   upData() {
     let fans = this.$db.get('fans')
+    let sunTask = this.$db.get('sunTask')
+    const week = new Date().getDay()
     if (!fans) {
       this.$message({
         type: 'error',
@@ -73,37 +78,48 @@ export default class user extends Vue {
       })
       return
     }
-    this.$store
-      .dispatch('getgift')
-      .then(() => {
-        if (this.gift.num > 0) {
-          let i = 4
-          let timer = setInterval(() => {
-            i--
-            this.info.title = `${i}秒后开始赠送...`
-            this.info.show = true
-            if (i === 1) {
-              this.info.show = false
-              clearInterval(timer)
-              init(fans).then(res => {
-                if (res) {
-                  setTimeout(() => {
-                    this.upData()
-                    this.$store.commit('isStart', false)
-                    let close = this.$db.get('close')
-                    if (close) {
-                      app.quit()
-                    }
-                  }, 5000)
-                }
-              })
-            }
-          }, 1000)
-        } else {
+    if (!sunTask || (sunTask && week == 0)) {
+      this.$store
+        .dispatch('getgift')
+        .then(() => {
+          if (this.gift.num > 0) {
+            let i = 4
+            let timer = setInterval(() => {
+              i--
+              this.info.title = `${i}秒后开始赠送...`
+              this.info.show = true
+              if (i === 1) {
+                this.info.show = false
+                clearInterval(timer)
+                init(fans).then(res => {
+                  if (res) {
+                    setTimeout(() => {
+                      this.upData()
+                      this.$store.commit('isStart', false)
+                      let close = this.$db.get('close')
+                      if (close) {
+                        app.quit()
+                      }
+                    }, 5000)
+                  }
+                })
+              }
+            }, 1000)
+          } else {
+            this.$store.commit('isStart', false)
+          }
+        })
+        .catch(() => {})
+    } else {
+      this.$store
+        .dispatch('getgift')
+        .then(() => {
+          this.info.title = '当前为周末送荧光棒模式,只在周日执行送礼物操作...'
+          this.info.show = true
           this.$store.commit('isStart', false)
-        }
-      })
-      .catch(() => {})
+        })
+        .catch(() => {})
+    }
   }
   start(type?: string) {
     if (type === 'auto') {
@@ -125,7 +141,7 @@ export default class user extends Vue {
         resizable: false,
         show: false
       })
-      this.win.loadURL('https://www.douyu.com/4120796')
+      this.win.loadURL('https://www.douyu.com/74751')
       this.win.on('closed', () => {
         this.upData()
       })

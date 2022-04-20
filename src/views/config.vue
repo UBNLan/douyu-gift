@@ -6,6 +6,7 @@
           <span>设置：</span>
           <el-checkbox v-model="run" @change="onRunChange">开机启动</el-checkbox>
           <el-checkbox v-model="close">任务完成后自动关闭</el-checkbox>
+          <el-checkbox v-model="sunTask">周日送荧光棒</el-checkbox>
           <el-checkbox v-model="timing" @change="onTimingChange">定时运行</el-checkbox><span style="font-size: 12px">{{ runtime }}</span>
         </span>
         <span>
@@ -58,6 +59,7 @@ export default class home extends Vue {
   run: boolean = false
   close: boolean = false
   timing: boolean = false
+  sunTask: boolean = false
   timingValue: any = null
   timingValueShow: boolean = false
   runtime: string = ''
@@ -142,6 +144,7 @@ export default class home extends Vue {
     this.$db.set('timing', newval)
     if (newval === true) {
       this.close = false
+      this.sunTask = false
     } else {
       this.timingClose()
     }
@@ -150,6 +153,14 @@ export default class home extends Vue {
   onCloseChangeWatch(newval: boolean) {
     // 监听自动关闭按钮
     this.$db.set('close', newval)
+    if (newval === true) {
+      this.timing = false
+    }
+  }
+  @Watch('sunTask')
+  onSunTaskChangeWatch(newval: boolean) {
+    // 监听周末送荧光棒按钮
+    this.$db.set('sunTask', newval)
     if (newval === true) {
       this.timing = false
     }
@@ -165,6 +176,7 @@ export default class home extends Vue {
     this.timing = this.$db.get('timing')
     this.runtime = this.$db.get('runtime')
     let fans = this.$db.get('fans')
+    this.sunTask = this.$db.get('sunTask')
     if (!fans) {
       this.updateFans()
     } else {

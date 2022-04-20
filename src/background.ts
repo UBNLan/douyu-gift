@@ -18,7 +18,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: tru
 function createWindow() {
   electron.Menu.setApplicationMenu(null)
   win = new BrowserWindow({
-    width: 800,
+    width: 900,
     height: 400,
     webPreferences: {
       nodeIntegration: true,
@@ -53,7 +53,7 @@ app.on('activate', () => {
 
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
-    await installVueDevtools()
+    //await installVueDevtools()
   }
   createWindow()
 })

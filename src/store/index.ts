@@ -17,6 +17,7 @@ export default new Vuex.Store({
       gif: '' // 荧光棒礼物图标地址
     },
     fans: [], // 粉丝牌数据,
+    sunTask: false, //是否周日再送,超级粉丝团周末1.5倍亲密度
     loading: false,
     isStart: false // 任务是否正在进行
   },
@@ -97,7 +98,7 @@ export default new Vuex.Store({
     getgift({ commit, dispatch }: any) {
       return new Promise<void>((resolve, reject) => {
         let params: FormData = new FormData()
-        params.append('rid', '4120796')
+        params.append('rid', '74751')
         axios
           .post('https://www.douyu.com/member/prop/query', params, {
             headers: {
